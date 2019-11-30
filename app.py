@@ -4,7 +4,6 @@ import dash_html_components as html
 import dash_core_components as dcc
 from dash.dependencies import Input, Output, State
 import dash_daq as daq
-
 import dash_bootstrap_components as dbc
 
 import json
@@ -134,14 +133,11 @@ def get_twitframe_url(encoded_url):
 #     return iframe
 
 ### layout
-app.layout = html.Div(className='row', children=[
+app.layout = html.Div(id='page', className='row', children=[
     dcc.Store(id='last-hovered'),
     html.Div(id='cyto-canvas', className='col-8 m-0 p-0', children=[
         cyto.Cytoscape( 
             id='cytoscape',
-            # layout={'name': 'concentric', 
-            #         'animate': True, 
-            #         'animationDuration': 1000},
             style={'width': '100%', 'height': '97vh'},
             elements=load_graph(),
             stylesheet=generate_stylesheet(),
@@ -150,11 +146,7 @@ app.layout = html.Div(className='row', children=[
     html.Div(className='col-4 p-0 m-0 pr-3 border border-dark', style={'background': 'white'}, children=[
         dcc.Tabs(id='tabs', children=[
             dcc.Tab(label='Data', selected_className='custom-tab--selected', children=[
-
-                html.Div(id='mouseover-output'),
                 html.Div(id='click-output', className='container', style={'height':'85vh'}),
-
-            
             ]),
             # end of data tab
             dcc.Tab(label='Control Panel', selected_className='custom-tab--selected', children=[
@@ -185,10 +177,6 @@ app.layout = html.Div(className='row', children=[
                         clearable=True,
                         multi=True
                     ),
-                    # dbc.Tooltip(
-                    #     "Choose the cutoffs for the % of each Senator's Tweets",
-                    #     target="senator-dropdown",
-                    # ),
                     
                     html.Br(),
                     html.Div(id='topic-title', children="Topics"),
@@ -199,10 +187,6 @@ app.layout = html.Div(className='row', children=[
                         clearable=True,
                         multi=True
                     ),
-                    # dbc.Tooltip(
-                    #     "Subset the data to view 1 or more political topics",
-                    #     target="topic-dropdown",
-                    # ),
 
                     html.Br(),
                     html.Div("Show Politcal Parties"),
@@ -211,6 +195,16 @@ app.layout = html.Div(className='row', children=[
                         "Switch on to color each Senator's node by their political party",
                         target="node-color-switch",
                     ),
+
+                    html.Br(),
+                    html.Div("Toggle Dark Mode"),
+                    daq.ToggleSwitch(
+                        id='dark-theme-switch',
+                        label=['Light', 'Dark'],
+                        style={'width': '250px', 'margin': 'auto'}, 
+                        value=False
+                    ),
+
                 ]),
             ]),
             # end of control panel tab
@@ -219,10 +213,9 @@ app.layout = html.Div(className='row', children=[
 ])
 
 
-######
+####################
 # Callbacks
-#######
-
+#####################
 @app.callback(Output('cytoscape', 'elements'),
              [Input('threshold-slider', 'value'),
               Input('senator-dropdown', 'value'),
@@ -409,6 +402,14 @@ def display_click_data(edge, node, elements):
             )
 
             return children
+
+@app.callback(Output('page', 'style'),
+            [Input('dark-theme-switch', 'value')])
+def change_bg(dark_theme):
+    if(dark_theme):
+        return {'background-color': '#303030'}
+    else:
+        return {'background-color': 'white'}
 
 
 if __name__ == '__main__':
