@@ -18,7 +18,7 @@ cyto.load_extra_layouts()
 ### layout
 app.layout = html.Div(id='page', className='row', children=[
     dcc.Store(id='last-hovered'),
-    html.Div(id='cyto-canvas', className='col-9 m-0 p-0', children=[
+    html.Div(id='cyto-canvas', className='col-8 m-0 p-0', children=[
         cyto.Cytoscape( 
             id='cytoscape',
             style={'width': '100%', 'height': '97vh'},
@@ -26,7 +26,7 @@ app.layout = html.Div(id='page', className='row', children=[
             stylesheet=generate_stylesheet(),
         ),
     ]),
-    html.Div(className='col-3 p-0 m-0 pr-3 border border-dark', style={'background': 'white'}, children=[
+    html.Div(className='col-4 p-0 m-0 pr-3 border border-dark', style={'background': 'white'}, children=[
         dcc.Tabs(id='tabs', children=[
             dcc.Tab(label='Data', selected_className='custom-tab--selected', children=[
                 html.Div(id='click-output', className='container', style={'height':'85vh'}),
